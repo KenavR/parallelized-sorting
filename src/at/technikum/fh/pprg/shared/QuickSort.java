@@ -8,7 +8,6 @@ import at.technikum.fh.pprg.test.TestConstants;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,9 +57,7 @@ public abstract class QuickSort {
     return left;
   };
 
-  protected final IQSCombineFunction<ArrayList<Integer>> combine = (i, j) -> {
-    return ((ArrayList) Stream.concat(i.stream(), j.stream()).collect(Collectors.toList()));
-  };
+  protected final IQSCombineFunction<ArrayList<Integer>> combine = (i, j) -> ((ArrayList) Stream.concat(i.stream(), j.stream()).collect(Collectors.toList()));
 
   private void addDelay() {
     if(TestConstants.DELAY <= 0) return;

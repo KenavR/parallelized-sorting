@@ -2,6 +2,7 @@ package at.technikum.fh.pprg.test.serial;
 
 import at.technikum.fh.pprg.helper.DataGenerator;
 import at.technikum.fh.pprg.serial.SerialQuickSort;
+import at.technikum.fh.pprg.test.TestConstants;
 import at.technikum.fh.pprg.test.Tester;
 
 import java.util.Date;
@@ -20,11 +21,16 @@ public class SerialQuickSortTester implements Tester {
     public long runTest(int size) {
         List<Integer> integers = DataGenerator.getListOfIntegers(size);
 
+        return runTest(integers);
+    }
+
+    @Override
+    public long runTest(List list) {
         SerialQuickSort qs = new SerialQuickSort();
         long start = new Date().getTime();
-        integers = qs.sort(integers);
+        list = qs.sort(list);
         long finished = new Date().getTime() - start;
-        //System.out.println(integers);
+        if(TestConstants.SHOW_SORTED_LIST)System.out.println(list);
         return finished;
     }
 }

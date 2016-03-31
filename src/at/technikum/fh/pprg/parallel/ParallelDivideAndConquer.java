@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 public class ParallelDivideAndConquer {
 
-    static ThreadPoolExecutor executorService = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    static ThreadPoolExecutor executorService = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.NANOSECONDS, new SynchronousQueue<Runnable>());
 
     public static <T> ArrayList<T> divideAndConquer(ITrivialFunction trivial, ISolveFunction solve, IDivideFunction divide, ICombineFunction combine, ArrayList<T> inputs, int treshold) throws Exception {
         //System.out.println("THREADS: "+executorService.getActiveCount());
@@ -19,26 +19,16 @@ public class ParallelDivideAndConquer {
             return (ArrayList<T>) solve.apply(inputs);
         }
 
-        int splitIdx = divide.apply(inputs, 0, inputs.size() - 1);
-        ArrayList<T> left;
-        ArrayList<T> right;
+        final int splitIdx = divide.apply(inputs, 0, inputs.size() - 1);
+        final ArrayList<T> left = new ArrayList<>(inputs.subList(0, splitIdx));
+        final ArrayList<T> right = new ArrayList<>(inputs.subList(splitIdx, inputs.size()));
+
         Future<ArrayList<T>> leftFuture;
         Future<ArrayList<T>> rightFuture;
-        if((left = new ArrayList<>(inputs.subList(0, splitIdx))).size() > treshold) {
-            //System.out.println("LEFT THREAD size: " + left.size() + " t: " + treshold);
-            final ArrayList<T> finalLeft = left;
-            leftFuture = executorService.submit(() -> divideAndConquer(trivial, solve, divide, combine, finalLeft, treshold));
-        } else {
-            //System.out.println("LEFT SERIAL size: " + left.size());
-            leftFuture = CompletableFuture.completedFuture(divideAndConquer(trivial, solve, divide, combine, left, treshold));
-        }
 
-        if((right = new ArrayList<>(inputs.subList(splitIdx, inputs.size()))).size() > treshold) {
-            final ArrayList<T> finalRight = right;
-            rightFuture = executorService.submit(() -> divideAndConquer(trivial, solve, divide, combine, finalRight, treshold));
-        } else {
-            rightFuture = CompletableFuture.completedFuture(divideAndConquer(trivial, solve, divide, combine, right, treshold));
-        }
+        leftFuture = (left.size() > treshold) ? executorService.submit(() -> divideAndConquer(trivial, solve, divide, combine, left, treshold)) : CompletableFuture.completedFuture(divideAndConquer(trivial, solve, divide, combine, left, treshold));
+        rightFuture = (right.size() > treshold) ? executorService.submit(() -> divideAndConquer(trivial, solve, divide, combine, right, treshold)) : CompletableFuture.completedFuture(divideAndConquer(trivial, solve, divide, combine, right, treshold));
+
 
         /*left = new ArrayList<>(inputs.subList(0, splitIdx));
         final ArrayList<T> finalLeft = left;
