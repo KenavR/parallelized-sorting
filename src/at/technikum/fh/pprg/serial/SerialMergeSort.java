@@ -1,20 +1,25 @@
 package at.technikum.fh.pprg.serial;
 
-import at.technikum.fh.pprg.shared.MergeSort;
-import at.technikum.fh.pprg.shared.divideAndConquer.ICombineFunction;
-import at.technikum.fh.pprg.shared.divideAndConquer.IDivideFunction;
-import at.technikum.fh.pprg.shared.divideAndConquer.ISolveFunction;
-import at.technikum.fh.pprg.shared.divideAndConquer.ITrivialFunction;
+import at.technikum.fh.pprg.shared.MergeSortHelper;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.*;
 
-public class SerialMergeSort extends MergeSort implements SerialSort<Integer>{
+public class SerialMergeSort {
 
-  public List<Integer> sort(List<Integer> list) {
-    return SerialDivideAndConquer.divideAndConquer(super.trivial, super.solve, divide, combine, (ArrayList<Integer>) list);
-  }
+    private final MergeSortHelper helper = MergeSortHelper.getInstance();
+
+    public List sort(List list){
+        if (list.size() <= 1) return list;
+
+        final int splitIdx = helper.devide(list);
+        final ArrayList<Integer> left = new ArrayList<>(list.subList(0, splitIdx));
+        final ArrayList<Integer> right = new ArrayList<>(list.subList(splitIdx, list.size()));
+
+        return helper.merge(sort(left), sort(right));
+    }
+
+
+
 }

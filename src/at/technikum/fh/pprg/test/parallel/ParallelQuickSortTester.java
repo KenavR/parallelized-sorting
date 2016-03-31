@@ -1,9 +1,10 @@
 package at.technikum.fh.pprg.test.parallel;
 
 import at.technikum.fh.pprg.helper.DataGenerator;
-import at.technikum.fh.pprg.parallel.ParallelQuickSort;
+import at.technikum.fh.pprg.parallel.QuickSort;
 import at.technikum.fh.pprg.test.TestConstants;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,9 +37,9 @@ public class ParallelQuickSortTester implements ParallelTester{
     @Override
     public long runTest(List list, int threshold) {
 
-        ParallelQuickSort qs = new ParallelQuickSort();
+        QuickSort qs = new QuickSort();
         long start = new Date().getTime();
-        list = qs.sort(list, threshold);
+        qs.sort((ArrayList<Integer>) list, 0, list.size()-1, threshold);
         long finished = new Date().getTime() - start;
         if(TestConstants.SHOW_SORTED_LIST)System.out.println(list);
         return finished;

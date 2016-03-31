@@ -28,7 +28,7 @@ public class SerialQuickSortTester implements Tester {
     public long runTest(List list) {
         SerialQuickSort qs = new SerialQuickSort();
         long start = new Date().getTime();
-        list = qs.sort(list);
+        qs.sort(list, 0, list.size()-1);
         long finished = new Date().getTime() - start;
         if(TestConstants.SHOW_SORTED_LIST)System.out.println(list);
         return finished;
